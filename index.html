@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZoloAI - AI Image Search v1</title>
+    <title>ZoloAI - Image Search</title>
     <style>
         body {
             margin: 0;
@@ -54,11 +54,21 @@
             background-color: #555;
         }
 
-        .result {
+        #results {
             margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .image {
+        .result {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result img {
             max-width: 100px;
             margin: 10px;
             border-radius: 10px;
@@ -149,49 +159,33 @@
     </div>
 
     <script>
-        // Sample images with tags
-        const images = [
-            {tags: ['sunset', 'beach', 'water'], src: 'beach.jpg'},
-            {tags: ['city', 'night', 'lights'], src: 'city.jpg'},
-            {tags: ['mountain', 'view', 'sky'], src: 'mountain.jpg'}
-        ];
-
         let currentImageIndex = 0;
-        let filteredImages = [];
+        let images = [];
 
-        // Handle search
         document.getElementById('search-btn').addEventListener('click', function() {
-            const query = document.getElementById('search-bar').value.toLowerCase().split(' ');
+            const query = document.getElementById('search-bar').value;
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = ''; // Clear previous results
 
-            filteredImages = images.filter(image => {
-                return query.every(term => image.tags.includes(term));
-            });
+            // Simulate image search with Google (for actual implementation, use an API or custom solution)
+            const searchUrl = `https://www.google.com/search?hl=en&tbm=isch&q=${encodeURIComponent(query)}`;
 
-            if (filteredImages.length > 0) {
-                filteredImages.forEach((image, index) => {
-                    const img = document.createElement('img');
-                    img.src = image.src;
-                    img.alt = image.tags.join(', ');
-                    img.className = 'image';
-                    img.dataset.index = index;
-                    resultsDiv.appendChild(img);
-                });
+            const iframe = document.createElement('iframe');
+            iframe.src = searchUrl;
+            iframe.style.width = '100%';
+            iframe.style.height = '600px';
+            iframe.style.border = 'none';
+            iframe.style.display = 'block';
+            resultsDiv.appendChild(iframe);
 
-                // Add event listener for clicking on an image
-                document.querySelectorAll('.image').forEach(img => {
-                    img.addEventListener('click', function() {
-                        currentImageIndex = parseInt(this.dataset.index);
-                        showSlideshow();
-                    });
-                });
-            } else {
-                resultsDiv.innerHTML = '<p>No images found.</p>';
-            }
+            // Show iframe and hide other elements
+            document.getElementById('title').style.display = 'none';
+            document.getElementById('search-bar').style.display = 'none';
+            document.getElementById('search-btn').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
         });
 
-        // Slideshow functionality
+        // Simulate slideshow functionality (with example images for demonstration)
         function showSlideshow() {
             document.getElementById('title').style.display = 'none';
             document.getElementById('search-bar').style.display = 'none';
@@ -204,7 +198,7 @@
         }
 
         function updateSlideshowImage() {
-            const currentImage = filteredImages[currentImageIndex];
+            const currentImage = images[currentImageIndex];
             const imgElement = document.getElementById('slideshow-image');
             imgElement.src = currentImage.src;
 
@@ -213,12 +207,12 @@
         }
 
         document.getElementById('prev-btn').addEventListener('click', function() {
-            currentImageIndex = (currentImageIndex > 0) ? currentImageIndex - 1 : filteredImages.length - 1;
+            currentImageIndex = (currentImageIndex > 0) ? currentImageIndex - 1 : images.length - 1;
             updateSlideshowImage();
         });
 
         document.getElementById('next-btn').addEventListener('click', function() {
-            currentImageIndex = (currentImageIndex < filteredImages.length - 1) ? currentImageIndex + 1 : 0;
+            currentImageIndex = (currentImageIndex < images.length - 1) ? currentImageIndex + 1 : 0;
             updateSlideshowImage();
         });
 
@@ -227,7 +221,7 @@
             document.getElementById('title').style.display = 'block';
             document.getElementById('search-bar').style.display = 'block';
             document.getElementById('search-btn').style.display = 'block';
-            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
             document.getElementById('slideshow-container').style.display = 'none';
         });
     </script>
